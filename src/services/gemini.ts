@@ -1,14 +1,14 @@
 /**
- * Gemini AI Service - PRODUCTION GRADE
- * Optimized for User's Available Models (2.0 Flash Stable & 2.5 Flash)
+ * Gemini AI Service - STRATEGY LAB
+ * Spanish Copywriting Engine for B2B Audiences
  */
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import type { AnalysisResult, CreatorResult, DesignerResult, ViralTrend } from '../types.js';
+import type { AnalysisResult, StrategyResult, ViralTrend } from '../types.js';
 import { PROMPTS } from '../constants/brand.js';
 import { sleep, log, extractJSON, safeJSONParse } from '../utils/helpers.js';
 
-// LISTA PRIORIZADA DE MODELOS (Basada en tu diagnóstico real)
+// LISTA PRIORIZADA DE MODELOS (Basada en diagnóstico real)
 const MODELS_TO_TRY = [
     'gemini-2.0-flash',       // PRIMARIA: Versión estable y rápida
     'gemini-2.5-flash',       // SECUNDARIA: Nueva generación (muy capaz)
@@ -24,7 +24,7 @@ export class GeminiService {
     private apiDelayMs: number;
     private lastCallTime: number = 0;
 
-    constructor(apiKey: string, apiDelayMs: number = 5000) { // Delay base 5s (suficiente para modelos estables)
+    constructor(apiKey: string, apiDelayMs: number = 5000) {
         if (!apiKey) throw new Error("Missing GEMINI_API_KEY");
         this.ai = new GoogleGenerativeAI(apiKey);
         this.apiDelayMs = apiDelayMs;
@@ -133,32 +133,25 @@ export class GeminiService {
         });
     }
 
-    async createBrandContent(analysis: AnalysisResult): Promise<CreatorResult> {
-        log('info', '✍️  Drafting new content...');
-        const prompt = PROMPTS.creator.replace('{analysis}', JSON.stringify(analysis, null, 2));
+    async createStrategy(analysis: AnalysisResult): Promise<StrategyResult> {
+        log('info', '🎯 Generating Spanish copywriting strategy...');
+        const prompt = PROMPTS.strategist.replace('{analysis}', JSON.stringify(analysis, null, 2));
 
         const response = await this.callAPI(prompt);
-        return safeJSONParse<CreatorResult>(extractJSON(response), {
-            headline: 'Error', body: response, cta: 'Error', keywords: [], tone: 'Error'
-        });
-    }
-
-    async designVisualTemplate(content: CreatorResult): Promise<DesignerResult> {
-        log('info', '🎨 Designing visuals...');
-        const prompt = PROMPTS.designer.replace('{content}', JSON.stringify(content, null, 2));
-
-        const response = await this.callAPI(prompt);
-        return safeJSONParse<DesignerResult>(extractJSON(response), {
-            htmlSnippet: '', designNotes: response, colorScheme: []
+        return safeJSONParse<StrategyResult>(extractJSON(response), {
+            hook_viral: 'Error generating strategy',
+            hook_authority: 'Error generating strategy',
+            hook_sales: 'Error generating strategy',
+            caption_main: response,
+            visual_brief: 'Error generating visual brief'
         });
     }
 
     async processTrend(trend: ViralTrend) {
         log('info', `🚀 Processing Trend: ${trend.id}`);
         const analysis = await this.analyzeViralStructure(trend);
-        const content = await this.createBrandContent(analysis);
-        const visual = await this.designVisualTemplate(content);
-        log('info', `✅ Finished: ${trend.id}`);
-        return { analysis, content, visual };
+        const strategy = await this.createStrategy(analysis);
+        log('info', `✅ Strategy generated: ${trend.id}`);
+        return { analysis, strategy };
     }
 }

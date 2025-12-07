@@ -1,24 +1,27 @@
 /**
  * Configuration Loader
- * Loads and validates environment configuration
+ * Loads and validates environment variables from .env
  */
 
-import { config as loadEnv } from 'dotenv';
-import type { Config } from '../types.js';
+import dotenv from 'dotenv';
 
 /**
  * Load configuration from environment variables
+ * @returns {import('../types.js').Config} Configuration object
+ * @throws {Error} If GEMINI_API_KEY is missing
  */
-export function loadConfig(): Config {
+export function loadConfig() {
     // Load .env file
-    loadEnv();
+    dotenv.config();
 
+    // Validate required environment variables
     const geminiApiKey = process.env.GEMINI_API_KEY;
     if (!geminiApiKey) {
-        throw new Error('GEMINI_API_KEY is required in environment variables');
+        throw new Error('MISSING CRITICAL CONFIG: GEMINI_API_KEY not found in .env file');
     }
 
-    return {
+    // Parse and build config object with defaults
+    const config = {
         geminiApiKey,
         apiDelayMs: parseInt(process.env.API_DELAY_MS || '5000', 10),
         inputFile: process.env.INPUT_FILE || 'viral_trends.json',
@@ -26,4 +29,6 @@ export function loadConfig(): Config {
         logLevel: process.env.LOG_LEVEL || 'info',
         logDir: process.env.LOG_DIR || 'logs',
     };
+
+    return config;
 }

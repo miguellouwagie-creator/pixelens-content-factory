@@ -30,34 +30,24 @@ export interface AnalysisResult {
 }
 
 /**
- * Result from AI content creation
+ * Strategic copywriting result with 3 angles (Spanish)
  */
-export interface CreatorResult {
-    headline: string;
-    body: string;
-    cta: string;
-    keywords: string[];
-    tone: string;
+export interface StrategyResult {
+    hook_viral: string;       // Instagram/Twitter - punchy, controversial
+    hook_authority: string;   // LinkedIn - data-driven, professional
+    hook_sales: string;       // Direct response - conversion focused
+    caption_main: string;     // Core value proposition
+    visual_brief: string;     // Designer instructions for Nano Banana
 }
 
 /**
- * Result from AI visual design
- */
-export interface DesignerResult {
-    htmlSnippet: string;
-    designNotes: string;
-    colorScheme: string[];
-}
-
-/**
- * Complete content piece for output
+ * Complete strategy brief for output
  */
 export interface ContentPiece {
     id: string;
     sourceUrl: string;
     analysis: AnalysisResult;
-    content: CreatorResult;
-    visual: DesignerResult;
+    strategy: StrategyResult;
     createdAt: Date;
 }
 
@@ -68,8 +58,7 @@ export interface Config {
     geminiApiKey: string;
     apiDelayMs: number;
     inputFile: string;
-    outputCalendar: string;
-    outputVisualsDir: string;
+    outputStrategy: string;
     logLevel: string;
     logDir: string;
 }

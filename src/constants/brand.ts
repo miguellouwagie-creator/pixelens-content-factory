@@ -1,27 +1,34 @@
 /**
- * Brand constants for Studio Pixelens
- * Used in AI prompts to maintain consistent brand voice and style
+ * Brand constants for Studio Pixelens - STRATEGY LAB
+ * Prompts for Spanish B2B copywriting strategy engine
  */
 
 export const BRAND = {
     name: 'Studio Pixelens',
 
     voice: {
-        tone: 'Minimalist, authoritative, technical but accessible',
-        avoid: ['clickbait', 'salesy language', 'emojis', 'ALL CAPS'],
-        prefer: ['value-driven', 'educational', 'data-backed', 'premium'],
+        tone: 'Experto accesible - Profesional sin ser aburrido',
+        avoid: ['clickbait', 'lenguaje vendedor', 'emojis excesivos', 'TODO MAYÚSCULAS'],
+        prefer: ['valor real', 'educación', 'datos verificables', 'premium'],
     },
 
     keywords: [
         'Astro',
-        'Performance',
-        'Custom Code',
+        'Rendimiento',
+        'Código Personalizado',
         'Anti-Wordpress',
-        'Luxury UI',
-        'High-End Web Design',
-        'Bespoke Development',
-        'Lightning-Fast',
-        'Conversion Optimization',
+        'UI de Lujo',
+        'Diseño Web Premium',
+        'Desarrollo a Medida',
+        'Velocidad Extrema',
+        'Optimización de Conversión',
+    ],
+
+    targetAudience: [
+        'Directores de hoteles españoles',
+        'CEOs de PYMEs',
+        'Propietarios de agencias',
+        'Tomadores de decisión B2B',
     ],
 
     visual: {
@@ -41,19 +48,19 @@ export const BRAND = {
         aesthetic: 'Clean, minimalist, luxurious',
     },
 
-    philosophy: 'Steal like an Artist - analyze viral structure, completely rewrite substance',
+    philosophy: 'Roba como un Artista - analiza estructura viral, reescribe completamente el contenido',
 
     contentPrinciples: [
-        'Lead with value, not hype',
-        'Back claims with data or examples',
-        'Educate, don\'t just promote',
-        'Speak to agency owners and decision-makers',
-        'Position as strategic partner, not vendor',
+        'Lidera con valor, no con bombo',
+        'Respalda afirmaciones con datos o ejemplos',
+        'Educa, no solo promociones',
+        'Habla a propietarios de agencias y tomadores de decisiones',
+        'Posiciónate como socio estratégico, no proveedor',
     ],
 } as const;
 
 /**
- * AI prompt templates
+ * AI prompt templates - SPANISH STRATEGY LAB
  */
 export const PROMPTS = {
     analyst: `You are a viral content analyst. Analyze the following post and extract its underlying structure.
@@ -74,51 +81,44 @@ Your task:
 
 Return your analysis in JSON format with keys: hookPattern, viralElements, structureBreakdown, keyTakeaways.`,
 
-    creator: `You are a content strategist for ${BRAND.name}, a luxury web design agency.
+    strategist: `Eres un estratega de contenido experto para ${BRAND.name}, una agencia de diseño web premium.
 
-BRAND VOICE: ${BRAND.voice.tone}
-KEYWORDS: ${BRAND.keywords.join(', ')}
-PHILOSOPHY: ${BRAND.philosophy}
+AUDIENCIA OBJETIVO: ${BRAND.targetAudience.join(', ')}.
+TONO: ${BRAND.voice.tone}
+PALABRAS CLAVE: ${BRAND.keywords.join(', ')}
+FILOSOFÍA: ${BRAND.philosophy}
 
-VIRAL STRUCTURE TO EMULATE:
+ESTRUCTURA VIRAL ANALIZADA:
 {analysis}
 
-EXAMPLE OF PERFECT OUTPUT STYLE:
-Headline: "Wordpress is killing your agency margins."
-Body: "Stop building technical debt. We migrated a client to Astro and their server costs dropped 90%. Speed is not a luxury, it's retention. Your competitors are still dragging templates; you could be shipping art."
-CTA: "Scale lean."
+EJEMPLO DE ESTILO PERFECTO:
+"Wordpress está matando tus márgenes de agencia. Deja de crear deuda técnica. Migramos un cliente a Astro y sus costes de servidor cayeron un 90%. La velocidad no es un lujo, es retención. Tus competidores siguen arrastrando plantillas; tú podrías estar creando arte."
 
-CRITICAL: Mimic the TONE and SENTENCE STRUCTURE of this example - short, punchy, authoritative. No fluff, no filler.
+CRÍTICO: Imita el TONO y ESTRUCTURA de FRASES - corto, directo, autoritario. Sin relleno.
 
-Your task:
-Create a NEW post for ${BRAND.name} that:
-1. Uses the same HOOK PATTERN but about high-end web design
-2. Maintains our authoritative, minimalist tone (NO clickbait)
-3. Incorporates our keywords naturally
-4. Provides genuine value to agency owners/decision-makers
+Tu tarea:
+Genera 3 variantes de copy en ESPAÑOL (España) perfectamente adaptadas a esta estructura viral:
 
-Return JSON with: headline, body, cta, keywords, tone.`,
+1. **HOOK VIRAL** (Instagram/Twitter): 
+   - Estilo: Directo, polémico, memorable
+   - Objetivo: Máximo alcance y shares
+   - Longitud: 1-2 frases impactantes
 
-    designer: `You are a visual designer for ${BRAND.name}.
+2. **HOOK AUTORIDAD** (LinkedIn):
+   - Estilo: Data-driven, académico, creíble
+   - Objetivo: Construir confianza y expertise
+   - Longitud: 2-3 frases profesionales con datos
 
-VISUAL STYLE:
-- Theme: ${BRAND.visual.theme}
-- Fonts: ${BRAND.visual.typography.primary}, ${BRAND.visual.typography.secondary}
-- Colors: ${JSON.stringify(BRAND.visual.colors)}
-- Aesthetic: ${BRAND.visual.aesthetic}
+3. **HOOK VENTAS** (Conversión):
+   - Estilo: Persuasivo, centrado en beneficios tangibles
+   - Objetivo: Generar leads y acción
+   - Longitud: 2-3 frases con value proposition clara
 
-CONTENT TO VISUALIZE:
-{content}
+También incluye:
+- **CAPTION PRINCIPAL**: El mensaje core de valor en 3-4 frases. Educativo pero convincente.
+- **BRIEF VISUAL**: Descripción detallada para diseñador en Nano Banana (ej: "Imagen minimalista modo oscuro mostrando gráfico de rendimiento con colores #0a0a0a fondo, tipografía Inter, datos en azul #3b82f6, estilo premium...")
 
-Your task:
-Create an HTML snippet using Tailwind CSS for an Instagram carousel slide.
+IMPORTANTE: TODO el copy debe estar en español de España (no América Latina). Usa vocabulario B2B profesional.
 
-Requirements:
-1. Use dark mode colors from our palette
-2. Typography: Inter for body, Playfair Display for headlines
-3. Generous whitespace, minimalist layout
-4. Mobile-first (Instagram format: 1080x1080)
-5. Include the headline, body, and CTA prominently
-
-Return JSON with: htmlSnippet, designNotes, colorScheme.`,
+Devuelve JSON con: hook_viral, hook_authority, hook_sales, caption_main, visual_brief`,
 } as const;

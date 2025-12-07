@@ -1,6 +1,6 @@
 /**
- * Pixelens Content Factory
- * Main entry point
+ * Pixelens Strategy Lab
+ * Spanish Copywriting Strategy Engine
  */
 
 import { loadConfig } from './config/loader.js';
@@ -16,7 +16,7 @@ import { BRAND } from './constants/brand.js';
  */
 async function main(): Promise<void> {
     console.log('\n' + '='.repeat(60));
-    console.log(`${BRAND.name} - Content Factory`);
+    console.log(`${BRAND.name} - Laboratorio de Estrategia`);
     console.log('='.repeat(60) + '\n');
 
     try {
@@ -25,8 +25,7 @@ async function main(): Promise<void> {
         const config = loadConfig();
         log('info', `API Delay: ${config.apiDelayMs}ms`);
         log('info', `Input: ${config.inputFile}`);
-        log('info', `Output Calendar: ${config.outputCalendar}`);
-        log('info', `Output Visuals: ${config.outputVisualsDir}`);
+        log('info', `Output Strategy: ${config.outputStrategy}`);
 
         // Step 2: Initialize AI service
         log('info', 'Initializing Gemini AI service');
@@ -41,33 +40,31 @@ async function main(): Promise<void> {
             return;
         }
 
-        // Step 4: Process trends through AI pipeline (with atomic saves)
+        // Step 4: Process trends through AI strategy pipeline
         log('info', `Processing ${trends.length} trends`);
         const startTime = Date.now();
         await processAllTrends(
             trends,
             geminiService,
-            config.outputCalendar,
-            config.outputVisualsDir
+            config.outputStrategy
         );
         const duration = ((Date.now() - startTime) / 1000).toFixed(2);
 
         // Summary
         console.log('\n' + '='.repeat(60));
-        console.log('SUMMARY');
+        console.log('RESUMEN');
         console.log('='.repeat(60));
-        console.log(`Total Trends: ${trends.length}`);
-        console.log(`Duration: ${duration}s`);
-        console.log(`Average: ${(parseFloat(duration) / trends.length).toFixed(2)}s per trend`);
-        console.log('\nOutput Files:');
-        console.log(`  - ${config.outputCalendar}`);
-        console.log(`  - ${config.outputVisualsDir}/post-*.html`);
+        console.log(`Total de Trends: ${trends.length}`);
+        console.log(`Duración: ${duration}s`);
+        console.log(`Promedio: ${(parseFloat(duration) / trends.length).toFixed(2)}s por trend`);
+        console.log('\nArchivo Generado:');
+        console.log(`  - ${config.outputStrategy}`);
         console.log('='.repeat(60) + '\n');
 
-        log('info', 'Content Factory completed successfully! 🎉');
+        log('info', 'Strategy Lab completed successfully! 🎉');
 
     } catch (error) {
-        log('error', 'Fatal error in Content Factory', error);
+        log('error', 'Fatal error in Strategy Lab', error);
         console.error('\n❌ Application failed. See logs above for details.\n');
         process.exit(1);
     }
