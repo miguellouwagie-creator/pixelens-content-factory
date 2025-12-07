@@ -7,7 +7,7 @@ import { loadConfig } from './config/loader.js';
 import { GeminiService } from './services/gemini.js';
 import { loadViralTrends } from './pipeline/loader.js';
 import { processAllTrends } from './pipeline/processor.js';
-import { exportContent } from './pipeline/exporter.js';
+
 import { log } from './utils/helpers.js';
 import { BRAND } from './constants/brand.js';
 
@@ -41,36 +41,28 @@ async function main(): Promise<void> {
             return;
         }
 
-        // Step 4: Process trends through AI pipeline
+        // Step 4: Process trends through AI pipeline (with atomic saves)
         log('info', `Processing ${trends.length} trends`);
         const startTime = Date.now();
-        const results = await processAllTrends(trends, geminiService);
+        await processAllTrends(
+            trends,
+            geminiService,
+            config.outputCalendar,
+            config.outputVisualsDir
+        );
         const duration = ((Date.now() - startTime) / 1000).toFixed(2);
 
-        // Step 5: Export results
-        log('info', 'Exporting results');
-        await exportContent(results, config.outputCalendar, config.outputVisualsDir);
-
         // Summary
-        const successCount = results.filter(r => r.success).length;
-        const failureCount = results.filter(r => !r.success).length;
-
         console.log('\n' + '='.repeat(60));
         console.log('SUMMARY');
         console.log('='.repeat(60));
         console.log(`Total Trends: ${trends.length}`);
-        console.log(`Successful: ${successCount}`);
-        console.log(`Failed: ${failureCount}`);
         console.log(`Duration: ${duration}s`);
         console.log(`Average: ${(parseFloat(duration) / trends.length).toFixed(2)}s per trend`);
         console.log('\nOutput Files:');
         console.log(`  - ${config.outputCalendar}`);
         console.log(`  - ${config.outputVisualsDir}/post-*.html`);
         console.log('='.repeat(60) + '\n');
-
-        if (failureCount > 0) {
-            log('warn', `${failureCount} trends failed processing. Check logs for details.`);
-        }
 
         log('info', 'Content Factory completed successfully! 🎉');
 

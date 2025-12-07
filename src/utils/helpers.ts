@@ -54,22 +54,45 @@ export function safeJSONParse<T>(text: string, fallback: T): T {
 }
 
 /**
- * Extract JSON from markdown code blocks
+ * Extract JSON from markdown code blocks or AI responses
+ * Uses multiple aggressive strategies to handle AI noise
  */
 export function extractJSON(text: string): string {
-    // Try to find JSON in code blocks
-    const codeBlockMatch = text.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
-    if (codeBlockMatch) {
-        return codeBlockMatch[1];
+    // Strategy A: Try to find JSON in ```json code blocks
+    const jsonCodeBlockMatch = text.match(/```json\s*([\s\S]*?)```/);
+    if (jsonCodeBlockMatch) {
+        const extracted = jsonCodeBlockMatch[1].trim();
+        if (extracted.startsWith('{') && extracted.endsWith('}')) {
+            return extracted;
+        }
     }
 
-    // Try to find raw JSON object
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-        return jsonMatch[0];
+    // Strategy B: Try to find JSON in generic ``` code blocks
+    const genericCodeBlockMatch = text.match(/```\s*([\s\S]*?)```/);
+    if (genericCodeBlockMatch) {
+        const extracted = genericCodeBlockMatch[1].trim();
+        if (extracted.startsWith('{') && extracted.endsWith('}')) {
+            return extracted;
+        }
     }
 
-    return text;
+    // Strategy C: Extract from first { to last }
+    const firstBrace = text.indexOf('{');
+    const lastBrace = text.lastIndexOf('}');
+
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        const extracted = text.substring(firstBrace, lastBrace + 1);
+        // Quick validation: check if it looks like JSON
+        try {
+            JSON.parse(extracted);
+            return extracted;
+        } catch {
+            // If parsing fails, continue to fallback
+        }
+    }
+
+    // Fallback: Return original text (let caller handle parsing error)
+    return text.trim();
 }
 
 /**
