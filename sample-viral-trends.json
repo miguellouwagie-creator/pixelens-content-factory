@@ -1,0 +1,56 @@
+[
+    {
+        "id": "viral-001",
+        "username": "designstudio_pro",
+        "followers": 45000,
+        "postUrl": "https://instagram.com/p/example1",
+        "caption": "Most designers never learn this: Your website speed matters MORE than your design. Here's why → A 1-second delay = 7% drop in conversions. We rebuilt a client's site. Same design. Cut load time from 4.2s to 0.8s. Revenue jumped 43% in 30 days. The secret? Custom code. No page builders. No bloat. Just pure performance. Stop letting WordPress drag your brand down. Your customers are already gone. 💨",
+        "likes": 8943,
+        "comments": 267,
+        "engagementRate": 20.47,
+        "postedDate": "2024-12-01T10:30:00Z",
+        "hashtags": [
+            "webdesign",
+            "performance",
+            "webdev",
+            "ux"
+        ],
+        "outlierScore": 4.2
+    },
+    {
+        "id": "viral-002",
+        "username": "tech_minimalist",
+        "followers": 32000,
+        "postUrl": "https://instagram.com/p/example2",
+        "caption": "I spent $15,000 on a WordPress site. It crashed during our product launch. Lost $200K+ in sales. Then I hired a real developer to rebuild it from scratch. The result? ✓ Zero downtime in 18 months ✓ 10x faster ✓ Actually rankable on Google ✓ We can update it ourselves The lesson: Templates are cheap for a reason. They cost you later. WAY more. If your business is worth building, build it right the first time. 🏗️",
+        "likes": 6721,
+        "comments": 198,
+        "engagementRate": 21.62,
+        "postedDate": "2024-12-02T14:15:00Z",
+        "hashtags": [
+            "wordpress",
+            "webdevelopment",
+            "startup",
+            "tech"
+        ],
+        "outlierScore": 3.8
+    },
+    {
+        "id": "viral-003",
+        "username": "luxury_brands_hq",
+        "followers": 87000,
+        "postUrl": "https://instagram.com/p/example3",
+        "caption": "Unpopular opinion: Luxury brands shouldn't use Wix or Squarespace. Period. Your website is your digital storefront. Would you open a Hermès boutique in a strip mall? Then why use a generic template for your $500+ product? Real luxury needs: • Custom interactions • Flawless mobile experience • Instant load times • Unique brand expression You can't template luxury. You have to code it. 💎",
+        "likes": 12456,
+        "comments": 412,
+        "engagementRate": 14.79,
+        "postedDate": "2024-12-03T09:45:00Z",
+        "hashtags": [
+            "luxurybranding",
+            "ecommerce",
+            "brandstrategy",
+            "design"
+        ],
+        "outlierScore": 2.9
+    }
+]

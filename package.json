@@ -1,0 +1,30 @@
+{
+    "name": "pixelens-content-factory",
+    "version": "1.0.0",
+    "description": "Intelligent agent that transforms raw viral data into polished, brand-aligned content for Studio Pixelens",
+    "main": "dist/index.js",
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc && node dist/index.js",
+        "start": "node dist/index.js",
+        "clean": "if exist dist rmdir /s /q dist"
+    },
+    "keywords": [
+        "content-generation",
+        "ai",
+        "gemini",
+        "astro",
+        "web-design"
+    ],
+    "author": "Studio Pixelens",
+    "license": "MIT",
+    "dependencies": {
+        "@google/generative-ai": "^0.21.0",
+        "dotenv": "^16.4.5"
+    },
+    "devDependencies": {
+        "@types/node": "^22.10.1",
+        "typescript": "^5.7.2"
+    }
+}
