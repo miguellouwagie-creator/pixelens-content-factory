@@ -1,6 +1,6 @@
 /**
- * Gemini AI Service
- * Handles all interactions with Google's Generative AI API
+ * Gemini AI Service - PRODUCTION GRADE
+ * Optimized for User's Available Models (2.0 Flash Stable & 2.5 Flash)
  */
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -8,173 +8,157 @@ import type { AnalysisResult, CreatorResult, DesignerResult, ViralTrend } from '
 import { PROMPTS } from '../constants/brand.js';
 import { sleep, log, extractJSON, safeJSONParse } from '../utils/helpers.js';
 
+// LISTA PRIORIZADA DE MODELOS (Basada en tu diagnóstico real)
+const MODELS_TO_TRY = [
+    'gemini-2.0-flash',       // PRIMARIA: Versión estable y rápida
+    'gemini-2.5-flash',       // SECUNDARIA: Nueva generación (muy capaz)
+    'gemini-2.0-flash-lite',  // TERCIARIA: Backup ligero
+    'gemini-2.0-pro-exp',     // CUARTA: Potencia bruta (experimental)
+    'gemini-2.0-flash-exp'    // QUINTA: El viejo confiable (con límites bajos)
+] as const;
+
 export class GeminiService {
     private ai: GoogleGenerativeAI;
     private model: any;
+    private currentModelName: string;
     private apiDelayMs: number;
     private lastCallTime: number = 0;
 
-    constructor(apiKey: string, apiDelayMs: number = 2000) {
+    constructor(apiKey: string, apiDelayMs: number = 5000) { // Delay base 5s (suficiente para modelos estables)
+        if (!apiKey) throw new Error("Missing GEMINI_API_KEY");
         this.ai = new GoogleGenerativeAI(apiKey);
+        this.apiDelayMs = apiDelayMs;
+
+        // Empezamos con el campeón
+        this.currentModelName = MODELS_TO_TRY[0];
+        this.initializeModel(this.currentModelName);
+    }
+
+    private initializeModel(modelName: string): void {
+        log('info', `🔧 Initializing model strategy: ${modelName}`);
         this.model = this.ai.getGenerativeModel({
-            model: 'gemini-2.0-flash-exp',
+            model: modelName,
             generationConfig: {
                 temperature: 0.7,
                 topK: 40,
                 topP: 0.95,
             },
         });
-        this.apiDelayMs = apiDelayMs;
+        this.currentModelName = modelName;
     }
 
-    /**
-     * Apply rate limiting before API calls
-     */
     private async applyRateLimit(): Promise<void> {
         const now = Date.now();
         const timeSinceLastCall = now - this.lastCallTime;
-
         if (timeSinceLastCall < this.apiDelayMs) {
             const waitTime = this.apiDelayMs - timeSinceLastCall;
-            log('info', `Rate limiting: waiting ${waitTime}ms`);
+            if (waitTime > 1000) log('info', `⏳ Pace control: waiting ${Math.round(waitTime / 1000)}s`);
             await sleep(waitTime);
         }
-
         this.lastCallTime = Date.now();
     }
 
     /**
-     * Make API call with retry logic
+     * Llamada a API con "Supervivencia" (Cambio de modelo automático)
      */
     private async callAPI(prompt: string, maxRetries: number = 3): Promise<string> {
-        await this.applyRateLimit();
+        // Encontrar índice actual o resetear a 0
+        let currentModelIndex = MODELS_TO_TRY.indexOf(this.currentModelName as any);
+        if (currentModelIndex === -1) currentModelIndex = 0;
 
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            await this.applyRateLimit();
+
             try {
-                log('info', `API call attempt ${attempt}/${maxRetries}`);
+                log('info', `⚡ Generating with ${this.currentModelName} (Attempt ${attempt}/${maxRetries})`);
                 const result = await this.model.generateContent(prompt);
                 const response = await result.response;
                 return response.text();
-            } catch (error) {
-                log('error', `API call failed (attempt ${attempt}/${maxRetries})`, error);
 
-                if (attempt === maxRetries) {
-                    throw error;
+            } catch (error: any) {
+                const errorMessage = String(error);
+                const isRateLimit = errorMessage.includes('429') || errorMessage.includes('Quota') || errorMessage.includes('Too Many Requests');
+                const isNotFound = errorMessage.includes('404') || errorMessage.includes('Not Found');
+
+                log('warn', `⚠️ Error on ${this.currentModelName}: ${errorMessage.split('[')[0]}...`);
+
+                // CASO 1: MODELO NO ENCONTRADO (404) -> CAMBIO INMEDIATO
+                if (isNotFound) {
+                    log('warn', `❌ Model ${this.currentModelName} not found (404). Switching...`);
+                    currentModelIndex++;
+                    if (currentModelIndex < MODELS_TO_TRY.length) {
+                        this.initializeModel(MODELS_TO_TRY[currentModelIndex]);
+                        attempt--; // No gastamos intento, probamos el nuevo ya
+                        continue;
+                    }
                 }
 
-                // Exponential backoff
-                await sleep(1000 * Math.pow(2, attempt));
+                // CASO 2: LÍMITE DE VELOCIDAD (429) -> ESPERA + REINTENTO (o cambio si persiste)
+                if (isRateLimit) {
+                    log('warn', `🛑 Rate Limit Hit (429). Pausing for 60s...`);
+                    await sleep(60000); // Pausa de seguridad
+
+                    // Si ya fallamos una vez con este modelo por rate limit, cambiamos al siguiente
+                    if (attempt > 1) {
+                        log('warn', `🔄 Still rate limited. Switching model to escape block...`);
+                        currentModelIndex++;
+                        if (currentModelIndex < MODELS_TO_TRY.length) {
+                            this.initializeModel(MODELS_TO_TRY[currentModelIndex]);
+                        }
+                    }
+                    continue;
+                }
+
+                // Otros errores
+                if (attempt === maxRetries) throw error;
+                await sleep(5000);
             }
         }
-
-        throw new Error('Max retries exceeded');
+        throw new Error('All models/retries exhausted');
     }
 
-    /**
-     * STEP 1: Analyze viral structure
-     */
-    async analyzeViralStructure(trend: ViralTrend): Promise<AnalysisResult> {
-        log('info', `Analyzing viral structure for post ${trend.id}`);
+    // --- MÉTODOS DE NEGOCIO ---
 
+    async analyzeViralStructure(trend: ViralTrend): Promise<AnalysisResult> {
+        log('info', `🧠 Analyzing viral DNA for: ${trend.id}`);
         const prompt = PROMPTS.analyst
             .replace('{caption}', trend.caption)
             .replace('{likes}', trend.likes.toString())
             .replace('{comments}', trend.comments.toString())
             .replace('{engagementRate}', trend.engagementRate.toFixed(2));
 
-        try {
-            const response = await this.callAPI(prompt);
-            const jsonText = extractJSON(response);
-            const parsed = safeJSONParse<AnalysisResult>(jsonText, {
-                hookPattern: 'Unable to parse',
-                viralElements: [],
-                structureBreakdown: response,
-                keyTakeaways: [],
-            });
-
-            log('info', `Analysis complete for post ${trend.id}`);
-            return parsed;
-        } catch (error) {
-            log('error', `Failed to analyze post ${trend.id}`, error);
-            throw error;
-        }
+        const response = await this.callAPI(prompt);
+        return safeJSONParse<AnalysisResult>(extractJSON(response), {
+            hookPattern: 'Analysis Failed', viralElements: [], structureBreakdown: response, keyTakeaways: []
+        });
     }
 
-    /**
-     * STEP 2: Create brand-aligned content
-     */
     async createBrandContent(analysis: AnalysisResult): Promise<CreatorResult> {
-        log('info', 'Creating brand-aligned content');
+        log('info', '✍️  Drafting new content...');
+        const prompt = PROMPTS.creator.replace('{analysis}', JSON.stringify(analysis, null, 2));
 
-        const prompt = PROMPTS.creator
-            .replace('{analysis}', JSON.stringify(analysis, null, 2));
-
-        try {
-            const response = await this.callAPI(prompt);
-            const jsonText = extractJSON(response);
-            const parsed = safeJSONParse<CreatorResult>(jsonText, {
-                headline: 'Content Creation Failed',
-                body: response,
-                cta: 'Learn More',
-                keywords: [],
-                tone: 'professional',
-            });
-
-            log('info', 'Content creation complete');
-            return parsed;
-        } catch (error) {
-            log('error', 'Failed to create content', error);
-            throw error;
-        }
+        const response = await this.callAPI(prompt);
+        return safeJSONParse<CreatorResult>(extractJSON(response), {
+            headline: 'Error', body: response, cta: 'Error', keywords: [], tone: 'Error'
+        });
     }
 
-    /**
-     * STEP 3: Design visual template
-     */
     async designVisualTemplate(content: CreatorResult): Promise<DesignerResult> {
-        log('info', 'Designing visual template');
+        log('info', '🎨 Designing visuals...');
+        const prompt = PROMPTS.designer.replace('{content}', JSON.stringify(content, null, 2));
 
-        const prompt = PROMPTS.designer
-            .replace('{content}', JSON.stringify(content, null, 2));
-
-        try {
-            const response = await this.callAPI(prompt);
-            const jsonText = extractJSON(response);
-            const parsed = safeJSONParse<DesignerResult>(jsonText, {
-                htmlSnippet: '<div>Design failed</div>',
-                designNotes: response,
-                colorScheme: [],
-            });
-
-            log('info', 'Visual design complete');
-            return parsed;
-        } catch (error) {
-            log('error', 'Failed to design visual', error);
-            throw error;
-        }
+        const response = await this.callAPI(prompt);
+        return safeJSONParse<DesignerResult>(extractJSON(response), {
+            htmlSnippet: '', designNotes: response, colorScheme: []
+        });
     }
 
-    /**
-     * Process a single trend through the complete pipeline
-     */
-    async processTrend(trend: ViralTrend): Promise<{
-        analysis: AnalysisResult;
-        content: CreatorResult;
-        visual: DesignerResult;
-    }> {
-        log('info', `Processing trend ${trend.id}: ${trend.username}`);
-
-        // Step 1: Analyze
+    async processTrend(trend: ViralTrend) {
+        log('info', `🚀 Processing Trend: ${trend.id}`);
         const analysis = await this.analyzeViralStructure(trend);
-
-        // Step 2: Create
         const content = await this.createBrandContent(analysis);
-
-        // Step 3: Design
         const visual = await this.designVisualTemplate(content);
-
-        log('info', `Completed processing trend ${trend.id}`);
-
+        log('info', `✅ Finished: ${trend.id}`);
         return { analysis, content, visual };
     }
 }

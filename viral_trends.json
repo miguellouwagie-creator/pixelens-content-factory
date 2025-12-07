@@ -1,0 +1,56 @@
+[
+    {
+        "id": "trend_2025_01",
+        "username": "frontend_minimalist",
+        "followers": 85000,
+        "postUrl": "https://instagram.com/p/real_trend_01",
+        "caption": "POV: You switched your agency portfolio from Next.js to Astro and your Lighthouse score went from 64 to 100. 🚀\n\nHere is the harsh truth: You are shipping 200kB of JavaScript for a static landing page. Your client doesn't care about your 'complex state management'. They care about bounce rates.\n\nWe audited 50 agency sites. The ones built with Astro loaded 40% faster and converted 15% better. Stop over-engineering. Ship HTML. \n\n#astrojs #webperformance #webdesign #agencygrowth",
+        "likes": 15200,
+        "comments": 430,
+        "engagementRate": 18.4,
+        "postedDate": "2025-12-06T10:00:00Z",
+        "hashtags": [
+            "astrojs",
+            "performance",
+            "webdev",
+            "minimalism"
+        ],
+        "outlierScore": 9.8
+    },
+    {
+        "id": "trend_2025_02",
+        "username": "ui_bento_lab",
+        "followers": 120000,
+        "postUrl": "https://instagram.com/p/real_trend_02",
+        "caption": "The 'Perfect Grid' is dead. Long live the Bento. 🍱\n\nIn 2025, users are craving density and authenticity. We are seeing a massive shift away from huge hero sections with vague copy. \n\nThe new meta? Bento Grids that mix functional widgets, raw photography, and micro-interactions. It’s not just aesthetic; it's high-density information architecture. \n\nSwipe to see how we reorganized a SaaS dashboard using a modular Bento layout. Engagement went up 3x because users could find everything instantly. \n\n#uidesign #bentogrid #saasdesign #uiux2025 #productdesign",
+        "likes": 9800,
+        "comments": 210,
+        "engagementRate": 8.3,
+        "postedDate": "2025-12-05T14:30:00Z",
+        "hashtags": [
+            "uidesign",
+            "bentogrid",
+            "uiux",
+            "saas"
+        ],
+        "outlierScore": 7.5
+    },
+    {
+        "id": "trend_2025_03",
+        "username": "framer_speed_demon",
+        "followers": 45000,
+        "postUrl": "https://instagram.com/p/real_trend_03",
+        "caption": "Stop coding your marketing site from scratch. Just stop. 🛑\n\nI challenged a senior React dev to build a landing page. I used Framer. He used VS Code.\n\nResult:\nMe: Done in 45 mins. Published. Animation perfect.\nHim: Still configuring Tailwind config.\n\nFor SaaS products, speed is life. Framer isn't a 'no-code toy' anymore; it's the professional standard for shipping fast. If you are an agency not using this, you are burning margin.\n\n#framer #nocode #webdesign #freelancetips #productivity",
+        "likes": 5600,
+        "comments": 890,
+        "engagementRate": 14.4,
+        "postedDate": "2025-12-04T09:15:00Z",
+        "hashtags": [
+            "framer",
+            "nocode",
+            "webdesign",
+            "agency"
+        ],
+        "outlierScore": 9.2
+    }
+]
