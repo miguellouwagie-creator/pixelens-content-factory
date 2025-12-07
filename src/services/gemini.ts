@@ -16,7 +16,14 @@ export class GeminiService {
 
     constructor(apiKey: string, apiDelayMs: number = 2000) {
         this.ai = new GoogleGenerativeAI(apiKey);
-        this.model = this.ai.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+        this.model = this.ai.getGenerativeModel({
+            model: 'gemini-2.0-flash-exp',
+            generationConfig: {
+                temperature: 0.7,
+                topK: 40,
+                topP: 0.95,
+            },
+        });
         this.apiDelayMs = apiDelayMs;
     }
 

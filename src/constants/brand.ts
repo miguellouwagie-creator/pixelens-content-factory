@@ -83,6 +83,13 @@ PHILOSOPHY: ${BRAND.philosophy}
 VIRAL STRUCTURE TO EMULATE:
 {analysis}
 
+EXAMPLE OF PERFECT OUTPUT STYLE:
+Headline: "Wordpress is killing your agency margins."
+Body: "Stop building technical debt. We migrated a client to Astro and their server costs dropped 90%. Speed is not a luxury, it's retention. Your competitors are still dragging templates; you could be shipping art."
+CTA: "Scale lean."
+
+CRITICAL: Mimic the TONE and SENTENCE STRUCTURE of this example - short, punchy, authoritative. No fluff, no filler.
+
 Your task:
 Create a NEW post for ${BRAND.name} that:
 1. Uses the same HOOK PATTERN but about high-end web design
