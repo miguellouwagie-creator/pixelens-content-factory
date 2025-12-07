@@ -9,6 +9,7 @@ import type { ViralTrend } from '../types.js';
 import type { GeminiService } from '../services/gemini.js';
 import { log } from '../utils/helpers.js';
 import { saveVisualTemplate, appendTrendToCalendar } from './exporter.js';
+import { exportVisualToPNG } from '../services/visual_exporter.js';
 
 /**
  * Process multiple trends through the AI pipeline with atomic saves
@@ -28,12 +29,12 @@ export async function processAllTrends(
 
     for (let i = 0; i < trends.length; i++) {
         const trend = trends[i];
-        const visualPath = path.join(visualsDir, `post-${trend.id}.html`);
+        const pngPath = path.join(visualsDir, `post-${trend.id}.png`);
 
         log('info', `Processing trend ${i + 1}/${trends.length}: ${trend.id}`);
 
-        // STEP A: CHECK - Does the visual already exist?
-        if (fs.existsSync(visualPath)) {
+        // STEP A: CHECK - Does the PNG already exist? (PNG is final output)
+        if (fs.existsSync(pngPath)) {
             log('info', `⏭️  Skipping ${trend.id} (Already processed)`);
             skippedCount++;
             continue;
@@ -54,9 +55,14 @@ export async function processAllTrends(
 
             // STEP D: SAVE (Atomic) - Immediately persist both outputs
             await saveVisualTemplate(contentPiece, visualsDir);
+
+            // STEP E: EXPORT TO PNG - Convert HTML to production-ready image
+            await exportVisualToPNG(contentPiece, visualsDir);
+
+            // STEP F: UPDATE CALENDAR - Reference the final PNG
             await appendTrendToCalendar(contentPiece, calendarPath);
 
-            // STEP E: LOG success
+            // STEP G: LOG success
             log('info', `✓ Saved: ${trend.id}`);
             successCount++;
 

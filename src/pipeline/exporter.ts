@@ -81,7 +81,8 @@ export async function appendTrendToCalendar(
 ## Post ${id}: ${content.headline}
 
 **Status:** Draft | **Date:** ${date} | **Source:** ${sourceUrl || 'N/A'}  
-**Visual:** [post-${id}.html](visuals/post-${id}.html)
+**Visual:** ![${id}](visuals/post-${id}.png)  
+**Source Code:** [post-${id}.html](visuals/post-${id}.html)
 
 ### Content
 
